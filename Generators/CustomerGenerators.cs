@@ -18,7 +18,10 @@ public class CustomerGenerators : MonoBehaviour {
             initial=false;
         }
         else{
-            Object.Instantiate<GameObject>(customerSample);
+            if(listCount<=ShopStats.size){
+                Object.Instantiate<GameObject>(customerSample);
+                listCount++;
+            }
         }
         StartCoroutine(GenerateCustomers());
     }
