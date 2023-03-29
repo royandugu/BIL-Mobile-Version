@@ -23,5 +23,6 @@ public class BackgroundFader : MonoBehaviour {
         Game.playMonologue=true;
         Game.fadeEnd=true;
         Game.fadeStart=false;
+        Destroy(gameObject);
     }
 }
