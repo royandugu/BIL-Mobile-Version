@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+using UnityEngine;
+
 public class PlayerController : MonoBehaviour
 {
     private SpriteRenderer playerSprite;
@@ -7,10 +8,11 @@ public class PlayerController : MonoBehaviour
     private AnimationController aController;
     private float speed=4,xPressValue,yPressValue;
     public byte turnDir=2,phaseValue=1,collisionTurnDir=2;
-    private bool hasCollided=false;
-
-    //Unity built in functions
-     private void Awake() {
+    private bool hasCollided=false,touchStart=false;
+    private Vector2 pointA;
+    private Vector2 pointB;
+    //Unity built-ins
+    private void Awake() {
         playerSprite=GetComponent<SpriteRenderer>();    
         animController=GetComponent<Animator>();
         aController=new AnimationController("idleX");
@@ -47,6 +49,19 @@ public class PlayerController : MonoBehaviour
         }
 
         else DontDestroyOnLoad(this);
+
+       MovePlayer();
+
+    }
+    private void FixedUpdate(){
+        if(touchStart){
+            Vector2 offset=pointA-pointB;
+            Vector2 direction=Vector2.ClampMagnitude(offset,1.0f);
+            MovePlayer();
+            //transform.position+=direction*5.0f*Time.deltaTime;
+            Player.xCord=transform.position.x;
+            Player.yCord=transform.position.y;
+        }
     }
     private void OnCollisionEnter2D(Collision2D other) {
         hasCollided=true;
@@ -126,9 +141,12 @@ public class PlayerController : MonoBehaviour
         }
     }
     public void MovePlayer(){
-        transform.position+=new Vector3(xPressValue,yPressValue,0)*Time.deltaTime*speed;
-        Player.xCord=transform.position.x;
-        Player.yCord=transform.position.y;
+        if(Input.GetMouseButton(0)) pointA=Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y,Camera.main.transform.position.z));
+        if(Input.GetMouseButton(0)){
+            touchStart=true;
+            pointB=pointA=Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x,Input.mousePosition.y,Camera.main.transform.position.z));
+        }
+        else touchStart=false;
     }
 
 }

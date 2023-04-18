@@ -39,3 +39,4 @@ Fix the layering of all of them and then transfer old projects to this <copy all
 1. Fix all the layering
 2. Bring in the player and check kasari yo animation loop stop garne
 3. Assign the function at the end of the animation <reference old project>
+4. Once touch screen works move the Input.GetMouseButton to touch
