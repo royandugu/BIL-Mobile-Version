@@ -88,25 +88,29 @@ public class PlayerController : MonoBehaviour
 
     public void AnimatePlayer(){
         
-        if(direction.x>=-0.2 && direction.x<=0.2 && direction.y!=0){
+        if(direction.x == 0 && direction.y == 0){
+            if(turnDir == 0) aController.ChooseAnimationState(animController,"idleYNeg");
+            else if(turnDir == 1) aController.ChooseAnimationState(animController,"idleYPos");
+            else aController.ChooseAnimationState(animController,"idle");
+        }
+        else if(direction.x>=-0.2 && direction.x<=0.2 && direction.y!=0){
             
             if(direction.y>0){
+                turnDir=0;
                 aController.ChooseAnimationState(animController,"walkYNeg");              
             }  
             
             else if(direction.y<0){
+                turnDir=1;
                 aController.ChooseAnimationState(animController,"walkYPos");
             }      
         }
         else if(direction.y>=-0.2 && direction.y<=0.2 && direction.x!=0){
-            
-            if(direction.x>0){
-                //Animate player in x-right                
-            }  
-    
-            else if(direction.x<0){
-                //ANimate player in x-left
-            }      
+            turnDir=2;
+            if(direction.x<0) FlipPlayer(true);
+            else if(direction.x>0) FlipPlayer(false);
+
+            aController.ChooseAnimationState(animController,"walkX");
         }
         else{
             if(direction.x>0 && direction.y>0){
@@ -120,6 +124,8 @@ public class PlayerController : MonoBehaviour
             }
             else if(direction.x>0 && direction.y>0){
                 //animate in right top
+            }
+            else{
             }
         }
     }
@@ -174,51 +180,8 @@ public class PlayerController : MonoBehaviour
     //User-defined
     public void FlipPlayer(bool condition)
     {
-        if (condition)
-        {
-            if (xPressValue < 0) playerSprite.flipX = true;
-            else playerSprite.flipX = false;
-        }
-        else playerSprite.flipX = true;
+        playerSprite.flipX=condition;
     }
-
-    // public void AnimatePlayer()
-    // {
-    //     if (xPressValue == 0 && yPressValue == 0)
-    //     {
-    //         if (turnDir == 0) aController.ChooseAnimationState(animController, "idleYPos");
-    //         else if (turnDir == 1) aController.ChooseAnimationState(animController, "idleYNeg");
-    //         else if (turnDir == 2) aController.ChooseAnimationState(animController, "idleX");
-    //     }
-    //     else
-    //     {
-    //         if (xPressValue != 0 && yPressValue != 0)
-    //         {
-    //             turnDir = 2;
-    //             FlipPlayer(true);
-    //             aController.ChooseAnimationState(animController, "walkX");
-    //         }
-    //         else
-    //         {
-    //             if (yPressValue > 0)
-    //             {
-    //                 turnDir = 1;
-    //                 aController.ChooseAnimationState(animController, "walkYNeg");
-    //             }
-    //             if (yPressValue < 0)
-    //             {
-    //                 turnDir = 0;
-    //                 aController.ChooseAnimationState(animController, "walkYPos");
-    //             }
-    //             if (yPressValue == 0)
-    //             {
-    //                 turnDir = 2;
-    //                 FlipPlayer(true);
-    //                 aController.ChooseAnimationState(animController, "walkX");
-    //             }
-    //         }
-    //     }
-    // }
     public void MovePlayer()
     {
         if (Input.GetMouseButtonDown(0))
@@ -237,7 +200,10 @@ public class PlayerController : MonoBehaviour
             touchStart = true;
             pointB = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
         }
-        else touchStart = false;
+        else {
+            direction=new Vector2(0,0);
+            touchStart = false;
+        }
         AnimatePlayer();
     }
 
