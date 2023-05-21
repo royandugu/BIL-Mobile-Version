@@ -54,10 +54,15 @@ public class PlayerController : MonoBehaviour
             transform.position = new Vector3(0, 0, 0);
             SceneStateKeeper.currentScene = "PlayerShop";
         }
-       else DontDestroyOnLoad(this);
+        else DontDestroyOnLoad(this);
 
-        if(Input.GetKeyDown(KeyCode.A)) Debug.Log(direction);
-       MovePlayer();
+        if(hasCollided){
+            direction=new Vector2(0,0);
+        }
+
+        else{ 
+            MovePlayer();
+        }
     }
     private void FixedUpdate()
     {
@@ -86,8 +91,33 @@ public class PlayerController : MonoBehaviour
         collisionTurnDir = turnDir;
     }
 
+    private void OnCollisionStay2D(Collision2D other)
+    {
+        Debug.Log(direction);
+        if(collisionTurnDir == 0){
+            if(direction.y>0) {
+                aController.ChooseAnimationState(animController,"idleYNeg");
+                hasCollided=true;
+            }
+            else hasCollided=false;
+        }   
+        else if(collisionTurnDir == 1){
+            if(direction.y<0){
+                aController.ChooseAnimationState(animController,"idleYPos");
+                hasCollided=true;
+            }
+            else hasCollided=false;
+        }
+        else{
+            aController.ChooseAnimationState(animController,"idle");
+        }
+    }
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        hasCollided = false;
+    }
+
     public void AnimatePlayer(){
-        
         if(direction.x == 0 && direction.y == 0){
             if(turnDir == 0) aController.ChooseAnimationState(animController,"idleYNeg");
             else if(turnDir == 1) aController.ChooseAnimationState(animController,"idleYPos");
@@ -128,54 +158,6 @@ public class PlayerController : MonoBehaviour
             else{
             }
         }
-    }
-
-    private void OnCollisionStay2D(Collision2D other)
-    {
-        if (collisionTurnDir == 0)
-        {
-            if (yPressValue == -1)
-            {
-                hasCollided = true;
-                aController.ChooseAnimationState(animController, "idleYPos");
-            }
-            else hasCollided = false;
-        }
-        else if (collisionTurnDir == 1)
-        {
-            if (yPressValue == 1)
-            {
-                hasCollided = true;
-                aController.ChooseAnimationState(animController, "idleYNeg");
-            }
-            else hasCollided = false;
-        }
-        else
-        {
-            if (playerSprite.flipX)
-            {
-                if (xPressValue == -1)
-                {
-                    hasCollided = true;
-                    aController.ChooseAnimationState(animController, "idleX");
-                    playerSprite.flipX = true;
-                }
-                else hasCollided = false;
-            }
-            else
-            {
-                if (xPressValue == 1)
-                {
-                    hasCollided = true;
-                    aController.ChooseAnimationState(animController, "idleX");
-                }
-                else hasCollided = false;
-            }
-        }
-    }
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        hasCollided = false;
     }
     //User-defined
     public void FlipPlayer(bool condition)
