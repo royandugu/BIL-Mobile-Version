@@ -56,13 +56,11 @@ public class PlayerController : MonoBehaviour
         }
         else DontDestroyOnLoad(this);
 
-        if(hasCollided){
-            direction=new Vector2(0,0);
-        }
-
-        else{ 
+        if (!hasCollided) {
             MovePlayer();
+            AnimatePlayer();
         }
+        else touchStart=false;
     }
     private void FixedUpdate()
     {
@@ -70,19 +68,20 @@ public class PlayerController : MonoBehaviour
         {
             Vector2 offset = pointB - pointA;
             direction = Vector2.ClampMagnitude(offset, 1.0f);
-            
+
             transform.Translate(direction * speed * Time.deltaTime);
             Player.xCord = transform.position.x;
             Player.yCord = transform.position.y;
 
 
-            innerCircle.transform.position=new Vector2(pointA.x+direction.x,pointA.y+direction.y);
+            innerCircle.transform.position = new Vector2(pointA.x + direction.x, pointA.y + direction.y);
 
         }
         else
         {
             innerCircle.GetComponent<SpriteRenderer>().enabled = false;
             outerCircle.GetComponent<SpriteRenderer>().enabled = false;
+            direction=new Vector2(0,0);
         }
     }
     private void OnCollisionEnter2D(Collision2D other)
@@ -93,23 +92,32 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D other)
     {
-        Debug.Log(direction);
-        if(collisionTurnDir == 0){
+
+        // issue : - player x-axis mah pani farkera kahile kahi y axis side mah touch gardina sakxa, turn direction vanda pani square ko direction kata touch vako xa tyo anusar garna painxa? How to find the centre co-ordinates of the placed object and then based on that we can figure out where the player has collided ? 
+
+        if (collisionTurnDir == 0)
+        {
+            aController.ChooseAnimationState(animController, "idleYNeg");
+            MovePlayer();
             if(direction.y>0) {
                 aController.ChooseAnimationState(animController,"idleYNeg");
                 hasCollided=true;
             }
             else hasCollided=false;
-        }   
-        else if(collisionTurnDir == 1){
-            if(direction.y<0){
+        }
+        else if (collisionTurnDir == 1)
+        {
+            aController.ChooseAnimationState(animController, "idleYPos");
+            MovePlayer();
+            if(direction.y < 0) {
                 aController.ChooseAnimationState(animController,"idleYPos");
                 hasCollided=true;
             }
             else hasCollided=false;
         }
-        else{
-            aController.ChooseAnimationState(animController,"idle");
+        else
+        {
+            aController.ChooseAnimationState(animController, "idle");
         }
     }
     private void OnCollisionExit2D(Collision2D other)
@@ -117,52 +125,64 @@ public class PlayerController : MonoBehaviour
         hasCollided = false;
     }
 
-    public void AnimatePlayer(){
-        if(direction.x == 0 && direction.y == 0){
-            if(turnDir == 0) aController.ChooseAnimationState(animController,"idleYNeg");
-            else if(turnDir == 1) aController.ChooseAnimationState(animController,"idleYPos");
-            else aController.ChooseAnimationState(animController,"idle");
+    public void AnimatePlayer()
+    {
+        if (direction.x == 0 && direction.y == 0)
+        {
+            if (turnDir == 0) aController.ChooseAnimationState(animController, "idleYNeg");
+            else if (turnDir == 1) aController.ChooseAnimationState(animController, "idleYPos");
+            else aController.ChooseAnimationState(animController, "idle");
         }
-        else if(direction.x>=-0.2 && direction.x<=0.2 && direction.y!=0){
-            
-            if(direction.y>0){
-                turnDir=0;
-                aController.ChooseAnimationState(animController,"walkYNeg");              
-            }  
-            
-            else if(direction.y<0){
-                turnDir=1;
-                aController.ChooseAnimationState(animController,"walkYPos");
-            }      
-        }
-        else if(direction.y>=-0.2 && direction.y<=0.2 && direction.x!=0){
-            turnDir=2;
-            if(direction.x<0) FlipPlayer(true);
-            else if(direction.x>0) FlipPlayer(false);
+        else if (direction.x >= -0.2 && direction.x <= 0.2 && direction.y != 0)
+        {
 
-            aController.ChooseAnimationState(animController,"walkX");
+            if (direction.y > 0)
+            {
+                turnDir = 0;
+                aController.ChooseAnimationState(animController, "walkYNeg");
+            }
+
+            else if (direction.y < 0)
+            {
+                turnDir = 1;
+                aController.ChooseAnimationState(animController, "walkYPos");
+            }
         }
-        else{
-            if(direction.x>0 && direction.y>0){
+        else if (direction.y >= -0.2 && direction.y <= 0.2 && direction.x != 0)
+        {
+            turnDir = 2;
+            if (direction.x < 0) FlipPlayer(true);
+            else if (direction.x > 0) FlipPlayer(false);
+
+            aController.ChooseAnimationState(animController, "walkX");
+        }
+        else
+        {
+            if (direction.x > 0 && direction.y > 0)
+            {
                 //animate in right top
             }
-            else if(direction.x>0 && direction.y>0){
+            else if (direction.x > 0 && direction.y > 0)
+            {
                 //animate in right top
             }
-            else if(direction.x>0 && direction.y>0){
+            else if (direction.x > 0 && direction.y > 0)
+            {
                 //animate in right top
             }
-            else if(direction.x>0 && direction.y>0){
+            else if (direction.x > 0 && direction.y > 0)
+            {
                 //animate in right top
             }
-            else{
+            else
+            {
             }
         }
     }
     //User-defined
     public void FlipPlayer(bool condition)
     {
-        playerSprite.flipX=condition;
+        playerSprite.flipX = condition;
     }
     public void MovePlayer()
     {
@@ -176,17 +196,17 @@ public class PlayerController : MonoBehaviour
             innerCircle.GetComponent<SpriteRenderer>().enabled = true;
             outerCircle.GetComponent<SpriteRenderer>().enabled = true;
 
-        } 
+        }
         if (Input.GetMouseButton(0))
         {
             touchStart = true;
             pointB = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
         }
-        else {
-            direction=new Vector2(0,0);
+        else
+        {
+            direction = new Vector2(0, 0);
             touchStart = false;
         }
-        AnimatePlayer();
     }
 
 }
