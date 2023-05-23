@@ -8,10 +8,11 @@ public class ColliderController : MonoBehaviour
     
     private void Start() {
         playerController=FindObjectOfType<PlayerController>();
+        Debug.Log(transform.position);
     }
     void Update()
     {
-        if(Player.yCord+limit>transform.position.y) this.GetComponent<SpriteRenderer>().sortingLayerName="Random";
-        else this.GetComponent<SpriteRenderer>().sortingLayerName="Colliders";
+    //     if(Player.yCord+limit>transform.position.y) this.GetComponent<SpriteRenderer>().sortingLayerName="Random";
+    //     else this.GetComponent<SpriteRenderer>().sortingLayerName="Colliders";
     }
 }

@@ -1,0 +1,1 @@
+//jaba collision hunxa taba collider le chain afno transform dinu paryo

@@ -93,11 +93,11 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionStay2D(Collision2D other)
     {
 
-        // issue : - player x-axis mah pani farkera kahile kahi y axis side mah touch gardina sakxa, turn direction vanda pani square ko direction kata touch vako xa tyo anusar garna painxa? How to find the centre co-ordinates of the placed object and then based on that we can figure out where the player has collided ? 
+        // issue : - it's flickering 
+        // pattern : - animate idle to where the player was facing
 
-        if (collisionTurnDir == 0)
+        if (other.transform.position.y >= transform.position.y)
         {
-            aController.ChooseAnimationState(animController, "idleYNeg");
             MovePlayer();
             if(direction.y>0) {
                 aController.ChooseAnimationState(animController,"idleYNeg");
@@ -105,9 +105,8 @@ public class PlayerController : MonoBehaviour
             }
             else hasCollided=false;
         }
-        else if (collisionTurnDir == 1)
+        else if (other.transform.position.y <= transform.position.y)
         {
-            aController.ChooseAnimationState(animController, "idleYPos");
             MovePlayer();
             if(direction.y < 0) {
                 aController.ChooseAnimationState(animController,"idleYPos");
