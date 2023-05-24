@@ -56,38 +56,21 @@ public class PlayerController : MonoBehaviour
         }
         else DontDestroyOnLoad(this);
 
-        if (!hasCollided) {
+        if (!hasCollided)
+        {
             MovePlayer();
             AnimatePlayer();
         }
-        else touchStart=false;
     }
-    private void FixedUpdate()
-    {
-        if (touchStart)
-        {
-            Vector2 offset = pointB - pointA;
-            direction = Vector2.ClampMagnitude(offset, 1.0f);
-
-            transform.Translate(direction * speed * Time.deltaTime);
-            Player.xCord = transform.position.x;
-            Player.yCord = transform.position.y;
-
-
-            innerCircle.transform.position = new Vector2(pointA.x + direction.x, pointA.y + direction.y);
-
-        }
-        else
-        {
-            innerCircle.GetComponent<SpriteRenderer>().enabled = false;
-            outerCircle.GetComponent<SpriteRenderer>().enabled = false;
-            direction=new Vector2(0,0);
-        }
+    private void FixedUpdate(){
+        if(touchStart && !hasCollided) ChangePosition();
+        else DisableChangePosition();        
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
         hasCollided = true;
-        collisionTurnDir = turnDir;
+        xPressValue = transform.position.x;
+        yPressValue = transform.position.y;
     }
 
     private void OnCollisionStay2D(Collision2D other)
@@ -96,23 +79,22 @@ public class PlayerController : MonoBehaviour
         // issue : - it's flickering 
         // pattern : - animate idle to where the player was facing
 
-        if (other.transform.position.y >= transform.position.y)
+        if (other.transform.position.y >= yPressValue)
         {
-            MovePlayer();
-            if(direction.y>0) {
-                aController.ChooseAnimationState(animController,"idleYNeg");
-                hasCollided=true;
+
+            if (direction.y > 0)
+            {
+                aController.ChooseAnimationState(animController, "idleYNeg");
+                hasCollided = true;
             }
-            else hasCollided=false;
         }
         else if (other.transform.position.y <= transform.position.y)
         {
-            MovePlayer();
-            if(direction.y < 0) {
-                aController.ChooseAnimationState(animController,"idleYPos");
-                hasCollided=true;
+            if (direction.y < 0)
+            {
+                aController.ChooseAnimationState(animController, "idleYPos");
+                hasCollided = true;
             }
-            else hasCollided=false;
         }
         else
         {
@@ -206,6 +188,46 @@ public class PlayerController : MonoBehaviour
             direction = new Vector2(0, 0);
             touchStart = false;
         }
+    }
+    public void DirectionCheck()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+
+            pointA = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
+            innerCircle.transform.position = pointA;
+            outerCircle.transform.position = pointA;
+
+            innerCircle.GetComponent<SpriteRenderer>().enabled = true;
+            outerCircle.GetComponent<SpriteRenderer>().enabled = true;
+
+        }
+        if (Input.GetMouseButton(0))
+        {
+            pointB = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
+        }
+        else
+        {
+            direction = new Vector2(0, 0);
+        }
+    }
+    public void ChangePosition(){
+
+            Vector2 offset = pointB - pointA;
+            direction = Vector2.ClampMagnitude(offset, 1.0f);
+
+            transform.Translate(direction * speed * Time.deltaTime);
+            Player.xCord = transform.position.x;
+            Player.yCord = transform.position.y;
+
+
+            innerCircle.transform.position = new Vector2(pointA.x + direction.x, pointA.y + direction.y);
+
+    }
+    public void DisableChangePosition(){
+        innerCircle.GetComponent<SpriteRenderer>().enabled = false;
+        outerCircle.GetComponent<SpriteRenderer>().enabled = false;
+        direction = new Vector2(0, 0);
     }
 
 }
