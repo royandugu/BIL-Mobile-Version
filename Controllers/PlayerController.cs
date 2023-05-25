@@ -61,10 +61,7 @@ public class PlayerController : MonoBehaviour
             MovePlayer();
             AnimatePlayer();
         }
-    }
-    private void FixedUpdate(){
-        if(touchStart && !hasCollided) ChangePosition();
-        else DisableChangePosition();        
+        else DisableChangePosition();
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -81,8 +78,8 @@ public class PlayerController : MonoBehaviour
 
         if (other.transform.position.y >= yPressValue)
         {
-
-            if (direction.y > 0)
+            DirectionCheck();
+            if (direction.y > 0 && direction.x == 0)
             {
                 aController.ChooseAnimationState(animController, "idleYNeg");
                 hasCollided = true;
@@ -90,15 +87,14 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.transform.position.y <= transform.position.y)
         {
+            //Yei condition run hunu parne pani vaiirako
+            DirectionCheck();
             if (direction.y < 0)
             {
                 aController.ChooseAnimationState(animController, "idleYPos");
-                hasCollided = true;
+                DisableChangePosition();
             }
-        }
-        else
-        {
-            aController.ChooseAnimationState(animController, "idle");
+            else ChangePosition();
         }
     }
     private void OnCollisionExit2D(Collision2D other)

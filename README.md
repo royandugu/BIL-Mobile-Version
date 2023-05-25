@@ -27,12 +27,8 @@ Fix the layering of all of them and then transfer old projects to this <copy all
 6. A better approach to GameObject.FindPlayerWithTag?
 
 
-
-## Next commit<br>
-3. Fix the player walking with android buttons
-4. Shop functionalities (CustomerGeneration)
-`Swear this is the last time I am working on fetching. Let's just move on with building and then let's see when we get performance issues as we pile up our conversations.`
-
+## Next Commit <br> 
+1. Figure out the full functionalities of MovePlayer and all 
 
 
 ## Project moving to-dos
