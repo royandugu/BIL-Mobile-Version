@@ -58,10 +58,9 @@ public class PlayerController : MonoBehaviour
 
         if (!hasCollided)
         {
-            MovePlayer();
+            MovePlayer(true);
             AnimatePlayer();
         }
-        else DisableChangePosition();
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -72,13 +71,9 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D other)
     {
-
-        // issue : - it's flickering 
-        // pattern : - animate idle to where the player was facing
-
+        MovePlayer(false);
         if (other.transform.position.y >= yPressValue)
         {
-            DirectionCheck();
             if (direction.y > 0 && direction.x == 0)
             {
                 aController.ChooseAnimationState(animController, "idleYNeg");
@@ -87,14 +82,11 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.transform.position.y <= transform.position.y)
         {
-            //Yei condition run hunu parne pani vaiirako
-            DirectionCheck();
-            if (direction.y < 0)
-            {
+            if (direction.y >= 0) hasCollided=false;
+            else {
                 aController.ChooseAnimationState(animController, "idleYPos");
-                DisableChangePosition();
+                hasCollided=true;
             }
-            else ChangePosition();
         }
     }
     private void OnCollisionExit2D(Collision2D other)
@@ -161,32 +153,9 @@ public class PlayerController : MonoBehaviour
     {
         playerSprite.flipX = condition;
     }
-    public void MovePlayer()
+    public void MovePlayer(bool changePosition)
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-
-            pointA = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
-            innerCircle.transform.position = pointA;
-            outerCircle.transform.position = pointA;
-
-            innerCircle.GetComponent<SpriteRenderer>().enabled = true;
-            outerCircle.GetComponent<SpriteRenderer>().enabled = true;
-
-        }
-        if (Input.GetMouseButton(0))
-        {
-            touchStart = true;
-            pointB = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
-        }
-        else
-        {
-            direction = new Vector2(0, 0);
-            touchStart = false;
-        }
-    }
-    public void DirectionCheck()
-    {
+        if (Input.GetKeyDown(KeyCode.Space)) Debug.Log("Move player called");
         if (Input.GetMouseButtonDown(0))
         {
 
@@ -201,29 +170,19 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             pointB = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
-        }
-        else
-        {
-            direction = new Vector2(0, 0);
-        }
-    }
-    public void ChangePosition(){
-
             Vector2 offset = pointB - pointA;
             direction = Vector2.ClampMagnitude(offset, 1.0f);
-
-            transform.Translate(direction * speed * Time.deltaTime);
-            Player.xCord = transform.position.x;
-            Player.yCord = transform.position.y;
-
-
-            innerCircle.transform.position = new Vector2(pointA.x + direction.x, pointA.y + direction.y);
-
+            if (changePosition) ChangePosition();
+        }
+        else direction = new Vector2(0, 0);
     }
-    public void DisableChangePosition(){
-        innerCircle.GetComponent<SpriteRenderer>().enabled = false;
-        outerCircle.GetComponent<SpriteRenderer>().enabled = false;
-        direction = new Vector2(0, 0);
+    public void ChangePosition()
+    {
+        transform.Translate(direction * speed * Time.deltaTime);
+        Player.xCord = transform.position.x;
+        Player.yCord = transform.position.y;
+        innerCircle.transform.position = new Vector2(pointA.x + direction.x, pointA.y + direction.y);
+
     }
 
 }
