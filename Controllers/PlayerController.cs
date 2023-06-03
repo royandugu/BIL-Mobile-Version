@@ -3,13 +3,14 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private SpriteRenderer playerSprite;
-    private Animator animController;
+    public Animator animController;
     private string animationState;
-    private Vector2 direction;
-    private AnimationController aController;
+    public Vector2 direction;
+    public AnimationController aController;
     private float speed = 4, xPressValue, yPressValue;
     public byte turnDir = 2, phaseValue = 1, collisionTurnDir = 2;
-    private bool hasCollided = false, touchStart = false;
+    private bool touchStart = false;
+    public bool hasCollided=false;
     private Vector2 pointA;
     [SerializeField]
     private Transform innerCircle, outerCircle;
@@ -62,38 +63,6 @@ public class PlayerController : MonoBehaviour
             AnimatePlayer();
         }
     }
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        hasCollided = true;
-        xPressValue = transform.position.x;
-        yPressValue = transform.position.y;
-    }
-
-    private void OnCollisionStay2D(Collision2D other)
-    {
-        MovePlayer(false);
-        if (other.transform.position.y >= yPressValue)
-        {
-            if (direction.y > 0 && direction.x == 0)
-            {
-                aController.ChooseAnimationState(animController, "idleYNeg");
-                hasCollided = true;
-            }
-        }
-        else if (other.transform.position.y <= transform.position.y)
-        {
-            if (direction.y >= 0) hasCollided=false;
-            else {
-                aController.ChooseAnimationState(animController, "idleYPos");
-                hasCollided=true;
-            }
-        }
-    }
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        hasCollided = false;
-    }
-
     public void AnimatePlayer()
     {
         if (direction.x == 0 && direction.y == 0)
@@ -148,6 +117,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    
     //User-defined
     public void FlipPlayer(bool condition)
     {
@@ -172,6 +142,8 @@ public class PlayerController : MonoBehaviour
             pointB = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
             Vector2 offset = pointB - pointA;
             direction = Vector2.ClampMagnitude(offset, 1.0f);
+            innerCircle.transform.position = new Vector2(pointA.x + direction.x, pointA.y + direction.y);
+
             if (changePosition) ChangePosition();
         }
         else direction = new Vector2(0, 0);
@@ -181,7 +153,6 @@ public class PlayerController : MonoBehaviour
         transform.Translate(direction * speed * Time.deltaTime);
         Player.xCord = transform.position.x;
         Player.yCord = transform.position.y;
-        innerCircle.transform.position = new Vector2(pointA.x + direction.x, pointA.y + direction.y);
 
     }
 
