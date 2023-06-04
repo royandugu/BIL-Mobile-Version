@@ -3,12 +3,14 @@ public class CustomerGenerators : MonoBehaviour {
     [SerializeField]
     private GameObject customerSample,toBeServed;
     private bool initial=true;
-    private int listCount=0,firstEntry=0; 
+    private int firstEntry=0;
+
     //Unity built-ins
     private void Start() {
         customerSample.SetActive(false);
         StartCoroutine(GenerateCustomers());
     }
+    
     //User defined
     public System.Collections.IEnumerator GenerateCustomers(){
         float interval=Math.IntervalCalculator();
@@ -18,9 +20,9 @@ public class CustomerGenerators : MonoBehaviour {
             initial=false;
         }
         else{
-            if(listCount<=ShopStats.size){
+            if(ShopStats.currentCustomerCount<=ShopStats.size){
                 Object.Instantiate<GameObject>(customerSample);
-                listCount++;
+                ShopStats.currentCustomerCount++;
             }
         }
         StartCoroutine(GenerateCustomers());

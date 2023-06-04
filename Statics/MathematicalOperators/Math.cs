@@ -5,6 +5,6 @@ public static class Math{
     public static float IntervalCalculator(){
         System.Random rnd=new System.Random();
         int rndNumber=rnd.Next(0,8);
-        return 6-ShopStats.popularity+rndNumber;
+        return (6-ShopStats.popularity)+rndNumber;
     }
 }
