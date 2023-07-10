@@ -29,7 +29,7 @@ public class ColliderController : MonoBehaviour
         }
         else if (other.transform.position.y >= transform.position.y)
         {
-            if (playerController.direction.y > -0.2) playerController.hasCollided=false;
+            if (playerController.direction.y !=0) playerController.hasCollided=false;
             else
             {
                 playerController.aController.ChooseAnimationState(playerController.animController, "idleYPos");

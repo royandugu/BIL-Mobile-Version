@@ -125,7 +125,6 @@ public class PlayerController : MonoBehaviour
     }
     public void MovePlayer(bool changePosition)
     {
-        if (Input.GetKeyDown(KeyCode.Space)) Debug.Log("Move player called");
         if (Input.GetMouseButtonDown(0))
         {
 
